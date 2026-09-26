@@ -62,3 +62,18 @@ The broker gives its client access to the implemented adapter operations. Do not
 - `tools/check_gd101_adapter.py`: explicit live identity/voltage check.
 
 Downloaded vendor binaries, HDS installers, firmware files, captured traffic, private keys, and generated build artifacts are excluded. The legacy vendor-DLL authentication backend is intentionally unavailable in this source distribution.
+
+## Firmware updater development
+
+The source includes offline firmware-container inspection, updater packet
+encoding/validation, and an update workflow with injectable transports. There
+is no live flashing CLI or serial backend for this workflow. Firmware 1.15 was
+retrieved from the server used by the official updater; physical installation
+and native-driver compatibility with 1.15 have not been verified.
+
+The workflow requires a pinned image digest, confirms bootloader mode before
+erasing, stops after any uncertain exchange, checks integrity and requires an
+independent installed-version/native-driver check before reporting completion.
+These checks are tested with simulated transports. They do not establish safe
+power requirements, reliable USB mode transitions, or recovery from a failed
+physical update. Firmware files and vendor binaries are not included.
