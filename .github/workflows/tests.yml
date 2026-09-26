@@ -1,0 +1,17 @@
+name: Offline driver tests
+on: [push, pull_request]
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.14'
+      - run: python -m pip install -r tools/requirements-gd101.txt -r driver/requirements-build.txt
+      - run: python -m unittest discover -s tools -p 'test_gd101*.py'
+        env:
+          PYTHONPATH: tools
+          GD101_RUN_ABI_TESTS: '1'
