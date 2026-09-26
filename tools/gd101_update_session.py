@@ -1,10 +1,11 @@
 """Transport-independent updater exchange validation.
 
-No serial backend or flashing CLI is provided here. The caller owns exclusive
+The Linux serial backend is separate; no flashing CLI is provided here. The caller owns exclusive
 transport access. A failed or ambiguous exchange poisons this session: retrying
 an auto-incrementing write could silently move data to the wrong address.
 """
 import struct
+import math
 import time
 from gd101_update_protocol import encode_command, decode_reply
 
@@ -17,8 +18,8 @@ class UpdateSession:
     def exchange(self, command, payload, *, timeout):
         if self.failed:
             raise RuntimeError('Updater session failed; recovery required')
-        if timeout <= 0:
-            raise ValueError('Timeout must be positive')
+        if not isinstance(timeout,(int,float)) or not math.isfinite(timeout) or timeout <= 0:
+            raise ValueError('Timeout must be positive and finite')
         request = encode_command(command, payload)
         deadline = time.monotonic() + timeout
         def remaining_budget():
@@ -27,7 +28,7 @@ class UpdateSession:
                 raise TimeoutError('Updater exchange deadline exceeded')
             return remaining
         try:
-            written = self.transport.write(request)
+            written = self.transport.write(request,timeout=remaining_budget())
             if written != len(request):
                 raise IOError('Incomplete updater request write')
             header = self.transport.read_exact(4, timeout=remaining_budget())

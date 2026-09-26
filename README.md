@@ -66,8 +66,9 @@ Downloaded vendor binaries, HDS installers, firmware files, captured traffic, pr
 ## Firmware updater development
 
 The source includes offline firmware-container inspection, updater packet
-encoding/validation, and an update workflow with injectable transports. There
-is no live flashing CLI or serial backend for this workflow. Firmware 1.15 was
+encoding/validation, and an update workflow with injectable transports. An exclusive Linux serial backend is included, tested using pseudoterminals;
+there is no flashing CLI and the backend has not been validated with a physical
+bootloader session. Firmware 1.15 was
 retrieved from the server used by the official updater; physical installation
 and native-driver compatibility with 1.15 have not been verified.
 

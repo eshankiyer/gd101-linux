@@ -12,7 +12,7 @@ def reply(command, status=0):
 class Transport:
     def __init__(self, response, *, short_write=False):
         self.response=response;self.requests=[];self.short_write=short_write
-    def write(self,data):
+    def write(self,data,*,timeout):
         self.requests.append(data)
         return len(data)-int(self.short_write)
     def read_exact(self,count,*,timeout):
